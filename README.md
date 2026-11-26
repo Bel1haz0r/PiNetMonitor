@@ -62,10 +62,15 @@ Requirements: Raspberry Pi OS based on Debian 13 "trixie" (PHP 8.3 or newer). A 
 connection to the router** is strongly recommended: it removes Wi-Fi as a possible cause of every
 outage the Pi records.
 
-1. On your computer, build the frontend so Node.js is not needed on the Pi: `npm install && npm run build`
-2. Copy the project to the Pi, for example:
-   `rsync -a --exclude node_modules --exclude vendor --exclude .env --exclude 'database/*.sqlite*' --exclude storage/app/monitor ./ pi@raspberrypi.local:pinetmonitor/`
-3. On the Pi: `cd pinetmonitor && sudo bash deploy/install.sh`
+1. On the Pi: `sudo apt install -y git && git clone https://github.com/Bel1haz0r/PiNetMonitor.git pinetmonitor`
+2. `cd pinetmonitor && sudo bash deploy/install.sh`
+
+The built frontend (`public/build`) is committed, so Node.js is not needed on the Pi. After changing
+anything under `resources/js` or `resources/css`, run `npm run build` and commit the result.
+To update an installed Pi: `git pull && sudo bash deploy/install.sh`.
+
+Without git, copy the project instead:
+`rsync -a --exclude node_modules --exclude vendor --exclude .env --exclude 'database/*.sqlite*' --exclude storage/app/monitor ./ pi@raspberrypi.local:pinetmonitor/`
 
 The script installs PHP and tools, copies the app to `/opt/pinetmonitor`, runs migrations and installs
 two systemd services:
