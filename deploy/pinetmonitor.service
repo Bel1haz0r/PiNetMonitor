@@ -1,0 +1,32 @@
+[Unit]
+Description=PiNetMonitor - internet connection monitor daemon
+Documentation=file:///opt/pinetmonitor/README.md
+# Deliberately NOT After=network-online.target: the monitor has to be running
+# while the network is down - that is its purpose.
+After=local-fs.target
+
+[Service]
+Type=simple
+User=pinet
+Group=pinet
+WorkingDirectory=/opt/pinetmonitor
+ExecStart=/usr/bin/php artisan monitor:run
+Restart=always
+RestartSec=3
+# SIGTERM lets the daemon close the open incident and seal the chain entry.
+KillSignal=SIGTERM
+TimeoutStopSec=20
+# tmpfs directory for the live status file (/run/pinetmonitor), shared with the web unit.
+RuntimeDirectory=pinetmonitor
+RuntimeDirectoryPreserve=yes
+Environment=MONITOR_RUNTIME_DIR=/run/pinetmonitor
+# Unprivileged ICMP sockets are allowed by default on Raspberry Pi OS
+# (net.ipv4.ping_group_range). The daemon falls back to /usr/bin/ping otherwise.
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+Nice=-5
+
+[Install]
+WantedBy=multi-user.target

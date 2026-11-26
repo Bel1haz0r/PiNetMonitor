@@ -1,0 +1,21 @@
+[Unit]
+Description=PiNetMonitor - dashboard web server
+After=local-fs.target pinetmonitor.service
+
+[Service]
+Type=simple
+User=pinet
+Group=pinet
+WorkingDirectory=/opt/pinetmonitor
+Environment=PHP_CLI_SERVER_WORKERS=4
+Environment=MONITOR_RUNTIME_DIR=/run/pinetmonitor
+ExecStart=/usr/bin/php artisan serve --host=0.0.0.0 --port=8080 --no-reload
+Restart=always
+RestartSec=3
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
